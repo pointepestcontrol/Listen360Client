@@ -2,29 +2,36 @@
 
 namespace Listen360Client.Model
 {
-    [XmlRoot(ElementName = "franchisor")]
     public class Franchisor : Organization
     {
-        [XmlElement(ElementName = "average-job-value")]
-        public XmlDecimal AverageJobValue { get; set; }
-        [XmlElement(ElementName = "customer-lifetime")]
-        public XmlInt Customerlifetime { get; set; }
-        [XmlElement(ElementName = "customer-lifetime-interval")]
-        public string CustomerLifetimeInterval { get; set; }
-        [XmlElement(ElementName = "franchise-royalty-percentage")]
-        public XmlDecimal FranchiseRoyaltyPercentage { get; set; }
-        [XmlElement(ElementName = "locale")]
+        public long RootId { get; set; }
         public string Locale { get; set; }
-        [XmlElement(ElementName = "jobs-performed-per-interval")]
-        public XmlInt JobsPerformedPerInterval { get; set; }
-        [XmlElement(ElementName = "marketing-radius-miles")]
-        public XmlInt MarketingRadiusMiles { get; set; }
-
-        [XmlElement(ElementName = "operating-radius-miles")]
-        public XmlInt OperatingRadiusMiles { get; set; }
-        [XmlElement(ElementName = "recurring-jobs-interval")]
+        public decimal AverageJobValue { get; set; }
+        public int Customerlifetime { get; set; }
+        public string CustomerLifetimeInterval { get; set; }
+        public decimal FranchiseRoyaltyPercentage { get; set; }
+        public int JobsPerformedPerInterval { get; set; }
+        public int MarketingRadiusMiles { get; set; }
+        public int OperatingRadiusMiles { get; set; }
         public string RecurringJobsInterval { get; set; }
-        [XmlElement(ElementName = "root-id")]
-        public XmlLong RootId { get; set; }
+
+        public Franchisor()
+        {
+
+        }
+        internal Franchisor(Listen360Client.Model.Xml.Franchisor xml) : base (xml)
+        {
+            RootId = xml.RootId.Value;
+            Locale = xml.Locale;
+            AverageJobValue = xml.AverageJobValue.Value;
+            Customerlifetime = xml.Customerlifetime.Value;
+            CustomerLifetimeInterval = xml.CustomerLifetimeInterval;
+            FranchiseRoyaltyPercentage = xml.FranchiseRoyaltyPercentage.Value;
+            JobsPerformedPerInterval = xml.JobsPerformedPerInterval.Value;
+            MarketingRadiusMiles = xml.MarketingRadiusMiles.Value;
+            OperatingRadiusMiles = xml.OperatingRadiusMiles.Value;
+            RecurringJobsInterval = xml.RecurringJobsInterval;
+        }
+
     }
 }

@@ -5,19 +5,24 @@ using System.Xml.Serialization;
 
 namespace Listen360Client.Model
 {
-    [XmlRoot(ElementName ="franchise")]
     public class Franchise : Organization
     {
-        [XmlElement(ElementName = "locale")]
+        public long RootId { get; set; }
         public string Locale { get; set; }
+        public int MarketingRadiusMiles { get; set; }
+        public int OperatingRadiusMiles { get; set; }
 
-        [XmlElement(ElementName = "marketing-radius-miles")]
-        public XmlInt MarketingRadiusMiles { get; set; }
+        public Franchise()
+        {
 
-        [XmlElement(ElementName = "operating-radius-miles")]
-        public XmlInt OperatingRadiusMiles { get; set; }
+        }
 
-        [XmlElement(ElementName = "root-id")]
-        public XmlLong RootId { get; set; }
+        internal Franchise(Model.Xml.Franchise xml) : base (xml)
+        {
+            RootId = xml.RootId.Value;
+            Locale = xml.Locale;
+            MarketingRadiusMiles = xml.MarketingRadiusMiles.Value;
+            OperatingRadiusMiles = xml.OperatingRadiusMiles.Value;
+        }
     }
 }

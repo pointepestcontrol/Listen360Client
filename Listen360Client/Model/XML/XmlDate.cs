@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Listen360Client.Model
+namespace Listen360Client.Model.Xml
 {
-    public class XmlLong
+    public class XmlDate
     {
         [XmlAttribute(AttributeName = "type")]
         public string Type { get; set; }
-        [XmlAttribute(AttributeName = "nil")]
-        public bool Nil { get; set; }
         [XmlText]
-        public long Value { get; set; }
+        public DateTime Value { get; set; }
     }
 }

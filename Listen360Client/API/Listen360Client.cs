@@ -1,4 +1,4 @@
-﻿using Listen360Client.Model;
+﻿using Listen360Client.Model.Xml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +20,7 @@ namespace Listen360Client.API
             ApiKey = apiKey;
         }
         #region Organizations
-        public IEnumerable<Organization> GetOrganizations()
+        public IEnumerable<Model.Organization> GetOrganizations()
         {
             long currentPage = 1;
             int itemCount = 0;
@@ -39,9 +39,9 @@ namespace Listen360Client.API
                         //string resultContent = result.Content.ReadAsStringAsync().Result;
                         var orgs = (OrganizationCollection)serializer.Deserialize(stream);
                         itemCount = orgs.Organizations.Count;
-                        foreach (Organization org in orgs.Organizations)
+                        foreach (var org in orgs.Organizations)
                         {
-                            yield return org;
+                            yield return new Model.Organization(org);
                         }
                         currentPage++;
                     }
@@ -49,7 +49,7 @@ namespace Listen360Client.API
             }
             while (itemCount != 100 && itemCount != 0);
         }
-        public IEnumerable<Child> GetChildren(Organization parent)
+        public IEnumerable<Model.Child> GetChildren(Model.Organization parent)
         {
             long currentPage = 1;
             int itemCount = 0;
@@ -61,7 +61,7 @@ namespace Listen360Client.API
                     var byteArray = Encoding.ASCII.GetBytes($"{ApiKey}:x");
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                    var result = client.GetAsync($"/organizations/{parent.Id.Value}/children.xml?page={currentPage}").Result;
+                    var result = client.GetAsync($"/organizations/{parent.Id}/children.xml?page={currentPage}").Result;
                     using (var stream = result.Content.ReadAsStreamAsync().Result)
                     {
                         XmlSerializer serializer = new XmlSerializer(typeof(ChildrenCollection));
@@ -70,7 +70,7 @@ namespace Listen360Client.API
                         itemCount = orgs.Children.Count;
                         foreach (Child org in orgs.Children)
                         {
-                            yield return org;
+                            yield return new Model.Child(org);
                         }
                         currentPage++;
                     }
@@ -78,7 +78,7 @@ namespace Listen360Client.API
             }
             while (itemCount != 100 && itemCount != 0);
         }
-        public IEnumerable<Descendent> GetDescendents(Organization parent)
+        public IEnumerable<Model.Descendent> GetDescendents(Model.Organization parent)
         {
             long currentPage = 1;
             int itemCount = 0;
@@ -90,16 +90,16 @@ namespace Listen360Client.API
                     var byteArray = Encoding.ASCII.GetBytes($"{ApiKey}:x");
                     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                    var result = client.GetAsync($"/organizations/{parent.Id.Value}/descendents.xml?page={currentPage}").Result;
+                    var result = client.GetAsync($"/organizations/{parent.Id}/descendents.xml?page={currentPage}").Result;
                     using (var stream = result.Content.ReadAsStreamAsync().Result)
                     {
                         XmlSerializer serializer = new XmlSerializer(typeof(DescendentCollection));
                         // resultContent = result.Content.ReadAsStringAsync().Result;
                         var orgs = (DescendentCollection)serializer.Deserialize(stream);
                         itemCount = orgs.Descendents.Count;
-                        foreach (Descendent org in orgs.Descendents)
+                        foreach (var org in orgs.Descendents)
                         {
-                            yield return org;
+                            yield return new Model.Descendent(org);
                         }
                         currentPage++;
                     }
@@ -107,7 +107,7 @@ namespace Listen360Client.API
             }
             while (itemCount != 100 && itemCount != 0);
         }
-        public Organization Get<T>(long orgId)
+        internal Organization Get<T>(long orgId)
         {
             using (var client = new HttpClient())
             {
@@ -124,7 +124,7 @@ namespace Listen360Client.API
                 }
             }
         }
-        public Organization Get(Organization org)
+        public Model.Organization Get(Model.Organization org)
         {
             using (var client = new HttpClient())
             {
@@ -132,43 +132,47 @@ namespace Listen360Client.API
                 var byteArray = Encoding.ASCII.GetBytes($"{ApiKey}:x");
                 client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
 
-                var result = client.GetAsync($"/organizations/{org.Id.Value}.xml").Result;
-                XmlSerializer serializer;
+                var result = client.GetAsync($"/organizations/{org.Id}.xml").Result;
                 using (var stream = result.Content.ReadAsStreamAsync().Result)
                 {
+                    XmlSerializer serializer;
+                    Model.Organization returnVal;
                     switch (org.Type)
                     {
-                        case "Division":
+                        case Model.OrganizationType.Division:
                             serializer = new XmlSerializer(typeof(Division));
+                            returnVal = new Model.Division((Division)serializer.Deserialize(stream));
                             break;
-                        case "Franchise":
+                        case Model.OrganizationType.Franchise:
                             serializer = new XmlSerializer(typeof(Franchise));
+                            returnVal = new Model.Franchise((Franchise)serializer.Deserialize(stream));
                             break;
-                        case "Franchisor":
+                        case Model.OrganizationType.Franchisor:
                             serializer = new XmlSerializer(typeof(Franchisor));
+                            returnVal = new Model.Franchisor((Franchisor)serializer.Deserialize(stream));
                             break;
                         default:
                             throw new NotImplementedException($"The Entity {org.Type} is not supported");
                     }
-                     
+
                     // resultContent = result.Content.ReadAsStringAsync().Result;
-                    return (Organization)serializer.Deserialize(stream);
+                    return returnVal;
                 }
             }
         }
         #endregion
         #region Customers
-        public Customer GetCustomer(Customer c)
+        public Model.Customer GetCustomer(Model.Customer c)
         {
-            return GetCustomer(c.OrganizationId.Value, c.Id.Value);
+            return GetCustomer(c.OrganizationId, c.Id);
         }
 
-        public Customer GetCustomer(long orgID, long customerID)
+        public Model.Customer GetCustomer(long orgID, long customerID)
         {
-            return Get<Customer>($"/organizations/{orgID}/customers/{customerID}.xml");
+            return new Model.Customer(Get<Customer>($"/organizations/{orgID}/customers/{customerID}.xml"));
         }
 
-        public IEnumerable<Customer> GetCustomers(long orgId, DateTime? updatedBefore = null, DateTime? updatedAfter = null, UInt32 startPage = 1)
+        public IEnumerable<Model.Customer> GetCustomers(long orgId, DateTime? updatedBefore = null, DateTime? updatedAfter = null, UInt32 startPage = 1)
         {
             var currentPage = startPage;
             string dateFilter = "";
@@ -189,7 +193,7 @@ namespace Listen360Client.API
                     itemCount = customers.Customers.Count;
                     foreach (Customer customer in customers.Customers)
                     {
-                        yield return customer;
+                        yield return new Model.Customer(customer);
                     }
                 }
                 else
@@ -203,23 +207,23 @@ namespace Listen360Client.API
 
         #endregion
         #region Jobs
-        public Job GetJob(Organization org, Job job)
+        public Model.Job GetJob(Model.Organization org, Model.Job job)
         {
-            return GetJob(org.Id.Value, job.Id.Value);
+            return GetJob(org.Id, job.Id);
         }
-        public Job GetJob(long orgId, Job job)
+        public Model.Job GetJob(long orgId, Model.Job job)
         {
-            return GetJob(orgId, job.Id.Value);
+            return GetJob(orgId, job.Id);
         }
-        public Job GetJob(Organization org, long jobId)
+        public Model.Job GetJob(Model.Organization org, long jobId)
         {
-            return GetJob(org.Id.Value, jobId);
+            return GetJob(org.Id, jobId);
         }
-        public Job GetJob(long orgId, long jobId)
+        public Model.Job GetJob(long orgId, long jobId)
         {
-            return Get<Job>($"/organizations/{orgId}/jobs/{jobId}.xml");
+            return new Model.Job(Get<Job>($"/organizations/{orgId}/jobs/{jobId}.xml"));
         }
-        public IEnumerable<Job> GetJobs(long orgId, DateTime? updatedBefore = null, DateTime? updatedAfter = null, UInt32 startPage = 1)
+        public IEnumerable<Model.Job> GetJobs(long orgId, DateTime? updatedBefore = null, DateTime? updatedAfter = null, UInt32 startPage = 1)
         {
             var currentPage = startPage;
             string dateFilter = "";
@@ -240,7 +244,7 @@ namespace Listen360Client.API
                     itemCount = jobs.Jobs.Count;
                     foreach (Job job in jobs?.Jobs)
                     {
-                        yield return job;
+                        yield return new Model.Job(job);
                     }
                 }
                 else

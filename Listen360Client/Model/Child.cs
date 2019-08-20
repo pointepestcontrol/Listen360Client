@@ -2,8 +2,16 @@
 
 namespace Listen360Client.Model
 {
-    [XmlRoot(ElementName = "child")]
     public class Child : Organization
     {
+        public Child()
+        {
+
+        }
+
+        internal Child(Listen360Client.Model.Xml.Child xml) : base (xml)
+        {
+
+        }
     }
 }

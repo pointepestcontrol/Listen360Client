@@ -1,56 +1,70 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 
 namespace Listen360Client.Model
 {
     public class Organization
     {
-        [XmlElement(ElementName = "city")]
-        public string City { get; set; }
-        [XmlElement(ElementName = "country")]
-        public string Country { get; set; }
-        [XmlElement(ElementName = "created-at")]
-        public XmlDate CreatedAt { get; set; }
-        [XmlElement(ElementName = "email")]
-        public XmlString Email { get; set; }
-        [XmlElement(ElementName = "external-name")]
-        public string ExternalName { get; set; }
-        [XmlElement(ElementName = "id")]
-        public XmlLong Id { get; set; }
-        [XmlElement(ElementName = "latitude")]
-        public XmlDecimal Latitude { get; set; }
-        [XmlElement(ElementName = "longitude")]
-        public XmlDecimal Longitude { get; set; }
-        [XmlElement(ElementName = "name")]
+        public long Id { get; set; }
+        public OrganizationType Type { get; set; }
+        public long ParentId { get; set; }
         public string Name { get; set; }
-        [XmlElement(ElementName = "parent-id")]
-        public XmlLong ParentId { get; set; }
-        [XmlElement(ElementName = "phone-number")]
-        public XmlString PhoneNumber { get; set; }
-        [XmlElement(ElementName = "postal-code")]
-        public string Postalcode { get; set; }
-        [XmlElement(ElementName = "reference")]
+        public string ExternalName { get; set; }
+        public string Email { get; set; }
         public string Reference { get; set; }
-        [XmlElement(ElementName = "region")]
-        public string Region { get; set; }
-        [XmlElement(ElementName = "status")]
         public string Status { get; set; }
-        [XmlElement(ElementName = "street-address")]
         public string Streetaddress { get; set; }
-        [XmlElement(ElementName = "time-zone")]
+        public string City { get; set; }
+        public string Region { get; set; }
+        public string Postalcode { get; set; }
+        public string Country { get; set; }
         public string Timezone { get; set; }
-        [XmlElement(ElementName = "type")]
-        public string Type { get; set; }
-        [XmlElement(ElementName = "updated-at")]
-        public XmlDate UpdatedAt { get; set; }
-        [XmlElement(ElementName = "website")]
+        public string PhoneNumber { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
         public string Website { get; set; }
-        [XmlElement(ElementName = "net-promoter-score")]
-        public XmlInt NetPromoterScore { get; set; }
-        [XmlElement(ElementName = "total-reviews")]
-        public XmlLong TotalReviews { get; set; }
-        [XmlElement(ElementName = "zero-to-ten-rating")]
-        public XmlFloat ZeroToTenRating { get; set; }
-        [XmlElement(ElementName = "one-to-five-rating")]
-        public XmlFloat OneToFiveRating { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+        public int NetPromoterScore { get; set; }
+        public long TotalReviews { get; set; }
+        public float ZeroToTenRating { get; set; }
+        public float OneToFiveRating { get; set; }
+
+        public Organization()
+        {
+
+        }
+
+        internal Organization(Listen360Client.Model.Xml.Organization xml)
+        {
+            Id = xml.Id.Value;
+            if(!Enum.TryParse(xml.Type, out OrganizationType type))
+            {
+                throw new Exception();
+            }
+            Type = type;
+            ParentId = xml.ParentId.Value;
+            Name = xml.Name;
+            ExternalName = xml.ExternalName;
+            Email = xml.Email.Value;
+            Reference = xml.Reference;
+            Status = xml.Status;
+            Streetaddress = xml.Streetaddress;
+            City = xml.City;
+            Region = xml.Region;
+            Postalcode = xml.Postalcode;
+            Country = xml.Country;
+            Timezone = xml.Timezone;
+            PhoneNumber = xml.PhoneNumber.Value;
+            Latitude = xml.Latitude.Value;
+            Longitude = xml.Longitude.Value;
+            Website = xml.Website;
+            CreatedAt = xml.CreatedAt.Value;
+            UpdatedAt = xml.UpdatedAt.Value;
+            NetPromoterScore = xml.NetPromoterScore.Value;
+            TotalReviews = xml.TotalReviews.Value;
+            ZeroToTenRating = xml.ZeroToTenRating.Value;
+            OneToFiveRating = xml.OneToFiveRating.Value;
+        }
     }
 }

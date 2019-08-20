@@ -1,12 +1,13 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
-namespace Listen360Client.Model
+namespace Listen360Client.Model.Xml
 {
     [XmlRoot(ElementName = "performers")]
     public class PerformerCollection
     {
         [XmlElement(ElementName = "performer")]
-        public Performer Performers { get; set; }
+        public List<Performer> Performers { get; set; }
         [XmlAttribute(AttributeName = "type")]
         public string Type { get; set; }
     }

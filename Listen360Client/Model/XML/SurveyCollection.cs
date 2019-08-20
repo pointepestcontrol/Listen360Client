@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Listen360Client.Model
+namespace Listen360Client.Model.Xml
 {
-    public class XmlInt
+    [XmlRoot(ElementName = "surveys")]
+    public class SurveyCollection
     {
+        [XmlElement(ElementName = "survey")]
+        public List<Survey> Survey { get; set; }
         [XmlAttribute(AttributeName = "type")]
         public string Type { get; set; }
-        [XmlAttribute(AttributeName = "nil")]
-        public bool Nil { get; set; }
-        [XmlText]
-        public int Value { get; set; }
     }
 }

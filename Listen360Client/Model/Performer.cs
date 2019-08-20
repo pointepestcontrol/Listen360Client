@@ -1,31 +1,40 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 
 namespace Listen360Client.Model
 {
-    [XmlRoot(ElementName = "performer")]
     public class Performer
     {
-        [XmlElement(ElementName = "country")]
-        public XmlString Country { get; set; }
-        [XmlElement(ElementName = "created-at")]
-        public XmlDate CreatedAt { get; set; }
-        [XmlElement(ElementName = "email")]
-        public XmlString Email { get; set; }
-        [XmlElement(ElementName = "id")]
-        public XmlLong Id { get; set; }
-        [XmlElement(ElementName = "mobile-phone-number")]
-        public XmlString MobilePhoneNumber { get; set; }
-        [XmlElement(ElementName = "name")]
+        public string Country { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public string Email { get; set; }
+        public long Id { get; set; }
+        public string MobilePhoneNumber { get; set; }
         public string Name { get; set; }
-        [XmlElement(ElementName = "organization-id")]
-        public XmlLong OrganizationId { get; set; }
-        [XmlElement(ElementName = "reference")]
-        public XmlString Reference { get; set; }
-        [XmlElement(ElementName = "status")]
-        public XmlString Status { get; set; }
-        [XmlElement(ElementName = "type")]
-        public XmlString Type { get; set; }
-        [XmlAttribute(AttributeName = "type")]
+        public long OrganizationId { get; set; }
+        public string Reference { get; set; }
+        public string Status { get; set; }
+        public string Type { get; set; }
         public string _Type { get; set; }
+
+        public Performer()
+        {
+
+        }
+
+        public Performer(Listen360Client.Model.Xml.Performer xml)
+        {
+            Country = xml.Country.Value;
+            CreatedAt = xml.CreatedAt.Value;
+            Email = xml.Email.Value;
+            Id = xml.Id.Value;
+            MobilePhoneNumber = xml.MobilePhoneNumber.Value;
+            Name = xml.Name;
+            OrganizationId = xml.OrganizationId.Value;
+            Reference = xml.Reference.Value;
+            Status = xml.Status.Value;
+            Type = xml.Type.Value;
+            _Type = xml._Type;
+        }
     }
 }

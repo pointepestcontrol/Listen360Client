@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace Listen360Client.Model
+namespace Listen360Client.Model.Xml
 {
     [XmlRoot(ElementName = "membership")]
     public class Membership
