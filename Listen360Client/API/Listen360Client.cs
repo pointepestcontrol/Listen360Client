@@ -257,7 +257,48 @@ namespace Listen360Client.API
         }
 
         #endregion
+        #region Technicians
+        public Model.Technician GetTechnician(Model.Organization org, Model.Technician tech)
+        {
+            return GetTechnician(org.Id, tech.Id);
+        }
 
+        public Model.Technician GetTechnician(long orgId, Model.Technician tech)
+        {
+            return GetTechnician(orgId, tech.Id);
+        }
+        public Model.Technician GetTechnician(Model.Organization org, long techId)
+        {
+            return GetTechnician(org.Id, techId);
+        }
+        public Model.Technician GetTechnician(long orgId, long techId)
+        {
+            return new Model.Technician(Get<Technician>($"/organizations/{orgId}/technicians/{techId}.xml"));
+        }
+        public IEnumerable<Model.Technician> GetTechnicians(long orgId, UInt32 startPage = 1)
+        {
+            var currentPage = startPage;
+            int itemCount = 0;
+            do
+            {
+                var technicians = List<TechnicianCollection>($"/organizations/{orgId}/technicians.xml", $"page={currentPage}", "technician");
+                if (technicians != null)
+                {
+                    itemCount = technicians.Technicians.Count;
+                    foreach (Technician tech in technicians?.Technicians)
+                    {
+                        yield return new Model.Technician(tech);
+                    }
+                }
+                else
+                {
+                    itemCount = 0;
+                }
+                currentPage++;
+            }
+            while (itemCount != 0);
+        }
+        #endregion
         #region Internal Functions
         private T List<T>(string endpoint, string rootName)
         {
